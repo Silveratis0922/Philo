@@ -15,7 +15,9 @@ OBJSDIR	= obj
 INCSDIR	= inc
 LIBDIR	= Libft
 
-_SRCS	= main.c
+_SRCS	= main.c \
+	parsing_handler.c \
+	init_struct.c \
 
 SRCS	= $(addprefix $(SRCSDIR)/, $(_SRCS))
 OBJS	= $(SRCS:$(SRCSDIR)%.c=$(OBJSDIR)%.o)
