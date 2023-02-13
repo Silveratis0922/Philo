@@ -6,13 +6,13 @@
 /*   By: tchantro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 13:24:05 by tchantro          #+#    #+#             */
-/*   Updated: 2023/02/08 15:29:46 by tchantro         ###   ########.fr       */
+/*   Updated: 2023/02/13 18:06:25 by tchantro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	verif_arg(int arg, int index_arg, t_init *init)
+int	verif_arg(int arg, int index_arg, t_data *data)
 {
 	if (index_arg == 1)
 	{
@@ -36,7 +36,7 @@ int	verif_arg(int arg, int index_arg, t_init *init)
 		if (arg < 1)
 			return (printf("Philosopher must eat at least 1 time\n"), 5);
 	}
-	init_struct(arg, index_arg, init);
+	init_data(arg, index_arg, data);
 	return (0);
 }
 
@@ -45,12 +45,11 @@ int	parsing_arg(char **argv, int i, int j)
 	while (argv[i])
 	{
 		if (ft_strlen(argv[i]) == 0)
-		{
-			printf("Argument is empty\n");
-			return (1);
-		}
+			return (printf("Argument is empty\n"), 1);
 		else if (argv[i][j] == '-')
 			j++;
+		if (!argv[i][j])
+			return (printf("Only '-' didn't work\n"), 2);
 		while (ft_isdigit(argv[i][j]) == 1)
 			j++;
 		if (!argv[i][j])
@@ -59,10 +58,7 @@ int	parsing_arg(char **argv, int i, int j)
 			i++;
 		}
 		else
-		{
-			printf("Numeric argument is required\n");
-			return (2);
-		}
+			return (printf("Numeric argument is required\n"), 3);
 	}
 	return (0);
 }
