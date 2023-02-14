@@ -17,8 +17,10 @@ LIBDIR	= Libft
 
 _SRCS	= main.c \
 	parsing_handler.c \
-	init_struct.c \
+	init_handler.c \
 	routine_handler.c \
+	utils.c \
+	printing.c \
 
 SRCS	= $(addprefix $(SRCSDIR)/, $(_SRCS))
 OBJS	= $(SRCS:$(SRCSDIR)%.c=$(OBJSDIR)%.o)

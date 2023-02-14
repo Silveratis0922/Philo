@@ -6,7 +6,7 @@
 /*   By: tchantro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 14:12:42 by tchantro          #+#    #+#             */
-/*   Updated: 2023/02/13 17:54:31 by tchantro         ###   ########.fr       */
+/*   Updated: 2023/02/14 16:20:06 by tchantro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,14 @@
 # include <pthread.h>
 # include "libft.h"
 
+typedef struct s_philo
+{
+	int	name;
+	int	nbr_eat;
+	int	left_fork;
+	int	right_fork;
+}	t_philo;
+
 typedef struct s_data
 {
 	int	nbr_philo;
@@ -29,10 +37,14 @@ typedef struct s_data
 	int	must_eat;
 }	t_data;
 
+
 int		main(int argc, char **argv);
 int		parsing_handler(int argc, char **argv);
 int		verif_arg(int arg, int index_arg, t_data *data);
 void	init_data(int arg, int index_arg, t_data *data);
-void	start_routine(void);
+void	init_threads(t_data *data);
+void	*start_routine(void *arg);
+void	printing(int philo, int write);
+time_t	get_time(void);
 
 #endif
