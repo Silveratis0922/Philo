@@ -6,13 +6,11 @@
 /*   By: tchantro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 15:12:46 by tchantro          #+#    #+#             */
-/*   Updated: 2023/02/14 17:28:04 by tchantro         ###   ########.fr       */
+/*   Updated: 2023/02/22 17:22:08 by tchantro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-extern int test;
 
 void	init_data(int arg, int index_arg, t_data *data)
 {
@@ -28,27 +26,62 @@ void	init_data(int arg, int index_arg, t_data *data)
 		data->must_eat = arg;
 }
 
-void	init_threads(t_data *data)
+t_philo	*init_philo(t_data *data, t_chop *chop)
 {
-	pthread_t	tab[data->nbr_philo];
-	pthread_mutex_t	mutex;
+	int			i;
+	t_philo		*philo;
+
+	i = 0;
+	philo = malloc(sizeof (t_philo) * data->nbr_philo);
+	if (!philo)
+		return (NULL);
+	while (i < data->nbr_philo)
+	{
+		philo[i].name = i + 1;
+		philo[i].nbr_eat = 0;
+		philo[i].data = data;
+		philo[i].left_f = &chop[philo->name - 1];
+		philo[i].right_f = &chop[philo->name % data->nbr_philo];
+		i++;
+	}
+	return (philo);
+}
+
+t_chop	*init_chop(t_data *data)
+{
+	int			i;
+	t_chop		*chop;
+
+	i = 0;
+	chop = malloc(sizeof (t_chop) * data->nbr_philo);
+	if (!chop)
+		return (NULL);
+	while (i < data->nbr_philo)
+	{
+		chop[i].i_chop = 1;
+		//chop[i].index = i;
+		i++;
+	}
+	return (chop);
+}
+
+void	init_threads(t_philo *philo, t_data *data)
+{
 	int		i;
 
 	i = 0;
-	pthread_mutex_init(&mutex, NULL);
+	pthread_mutex_init(&data->mutex, NULL);
 	while (i < data->nbr_philo)
 	{
-		pthread_create(&tab[i], NULL, &start_routine, &mutex);
-		printf("Tread %d created\n", i);
+		pthread_create(&philo->thread, NULL, &routine, &philo[i]);
+		printf("%ld ms %d is thinking\n", get_time() - data->start, i + 1);
 		i++;
 	}
 	i = 0;
 	while (i < data->nbr_philo)
 	{
-		pthread_join(tab[i], NULL);
-		printf("thread %d finished\n", i);
+		pthread_join(philo->thread, NULL);
 		i++;
 	}
-	pthread_mutex_destroy(&mutex);
-	printf("test = %d\n", test);
+	pthread_mutex_destroy(&data->mutex);
 }
