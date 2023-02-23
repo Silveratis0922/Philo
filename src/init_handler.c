@@ -6,7 +6,7 @@
 /*   By: tchantro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 15:12:46 by tchantro          #+#    #+#             */
-/*   Updated: 2023/02/22 17:22:08 by tchantro         ###   ########.fr       */
+/*   Updated: 2023/02/23 15:22:41 by tchantro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ t_philo	*init_philo(t_data *data, t_chop *chop)
 	{
 		philo[i].name = i + 1;
 		philo[i].nbr_eat = 0;
+		philo[i].die = 0;
 		philo[i].data = data;
 		philo[i].left_f = &chop[philo->name - 1];
 		philo[i].right_f = &chop[philo->name % data->nbr_philo];
@@ -59,7 +60,7 @@ t_chop	*init_chop(t_data *data)
 	while (i < data->nbr_philo)
 	{
 		chop[i].i_chop = 1;
-		//chop[i].index = i;
+		pthread_mutex_init(&chop[i].m_chop, NULL);
 		i++;
 	}
 	return (chop);
@@ -73,8 +74,8 @@ void	init_threads(t_philo *philo, t_data *data)
 	pthread_mutex_init(&data->mutex, NULL);
 	while (i < data->nbr_philo)
 	{
+		philo[i].last_eat = philo->data->start;
 		pthread_create(&philo->thread, NULL, &routine, &philo[i]);
-		printf("%ld ms %d is thinking\n", get_time() - data->start, i + 1);
 		i++;
 	}
 	i = 0;

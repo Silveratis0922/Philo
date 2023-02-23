@@ -6,7 +6,7 @@
 /*   By: tchantro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 14:06:05 by tchantro          #+#    #+#             */
-/*   Updated: 2023/02/22 14:33:00 by tchantro         ###   ########.fr       */
+/*   Updated: 2023/02/23 15:05:53 by tchantro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ int	main(int argc, char **argv)
 		philo = init_philo(&data, chop);
 		data.start = get_time();
 		init_threads(philo, &data);
+		destroy(&data, chop);
 	}
 	return (0);
 }

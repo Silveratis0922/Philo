@@ -6,7 +6,7 @@
 /*   By: tchantro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 14:12:42 by tchantro          #+#    #+#             */
-/*   Updated: 2023/02/22 17:30:04 by tchantro         ###   ########.fr       */
+/*   Updated: 2023/02/23 16:22:09 by tchantro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,11 @@
 # include <sys/time.h>
 # include <pthread.h>
 # include "libft.h"
+# define FORK 1
+# define EAT 2
+# define SLEEP 3
+# define THINK 4
+# define DIE 5
 
 typedef struct s_chop
 {
@@ -36,12 +41,15 @@ typedef struct s_data
 	int				must_eat;
 	time_t			start;
 	pthread_mutex_t	mutex;
+	pthread_mutex_t	print;
 }	t_data;
 
 typedef struct s_philo
 {
 	int			name;
 	int			nbr_eat;
+	time_t			last_eat;
+	int			die;
 	t_chop		*left_f;
 	t_chop		*right_f;
 	pthread_t	thread;
@@ -56,10 +64,13 @@ t_philo		*init_philo(t_data *data, t_chop *chop);
 t_chop		*init_chop(t_data *data);
 void		init_threads(t_philo *philo, t_data *data);
 void		*routine(void *arg);
-void		take_left_chop(t_philo *philo);
-void		take_right_chop(t_philo *philo);
+int		take_left_chop(t_philo *philo);
+int		take_right_chop(t_philo *philo);
 void		put_chop(t_philo *philo);
-void		printing(time_t time, int philo, int write);
+int		is_sleeping(t_philo *philo);
+int		is_eating(t_philo *philo);
+void		printing(time_t time, t_philo *philo, int write);
+void		destroy(t_data *data, t_chop *chop);
 time_t		get_time(void);
 
 #endif

@@ -8,7 +8,7 @@ END	= \033[0m
 NAME	= philo
 LIBNAME	= libft.a
 CC	= gcc
-CFLAGS	= -Wall -Werror -Wextra
+CFLAGS	= -Wall -Werror -Wextra -O3
 
 SRCSDIR	= src
 OBJSDIR	= obj
@@ -21,6 +21,7 @@ _SRCS	= main.c \
 	routine_handler.c \
 	utils.c \
 	printing.c \
+	action.c
 
 SRCS	= $(addprefix $(SRCSDIR)/, $(_SRCS))
 OBJS	= $(SRCS:$(SRCSDIR)%.c=$(OBJSDIR)%.o)
