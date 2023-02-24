@@ -6,7 +6,7 @@
 /*   By: tchantro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 14:12:42 by tchantro          #+#    #+#             */
-/*   Updated: 2023/02/23 16:22:09 by tchantro         ###   ########.fr       */
+/*   Updated: 2023/02/24 17:34:49 by tchantro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ typedef struct s_chop
 {
 	pthread_mutex_t	m_chop;
 	int				i_chop;
-	int				index;
 }	t_chop;
 
 typedef struct s_data
@@ -39,6 +38,7 @@ typedef struct s_data
 	int				t_eat;
 	int				t_sleep;
 	int				must_eat;
+	int				death;
 	time_t			start;
 	pthread_mutex_t	mutex;
 	pthread_mutex_t	print;
@@ -48,8 +48,7 @@ typedef struct s_philo
 {
 	int			name;
 	int			nbr_eat;
-	time_t			last_eat;
-	int			die;
+	time_t		last_eat;
 	t_chop		*left_f;
 	t_chop		*right_f;
 	pthread_t	thread;
@@ -64,11 +63,12 @@ t_philo		*init_philo(t_data *data, t_chop *chop);
 t_chop		*init_chop(t_data *data);
 void		init_threads(t_philo *philo, t_data *data);
 void		*routine(void *arg);
-int		take_left_chop(t_philo *philo);
-int		take_right_chop(t_philo *philo);
+int			take_left_chop(t_philo *philo);
+int			take_right_chop(t_philo *philo);
 void		put_chop(t_philo *philo);
-int		is_sleeping(t_philo *philo);
-int		is_eating(t_philo *philo);
+int			is_sleeping(t_philo *philo);
+int			is_eating(t_philo *philo);
+int			is_thinking(t_philo *philo);
 void		printing(time_t time, t_philo *philo, int write);
 void		destroy(t_data *data, t_chop *chop);
 time_t		get_time(void);

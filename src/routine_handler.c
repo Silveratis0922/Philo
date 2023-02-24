@@ -6,7 +6,7 @@
 /*   By: tchantro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 15:07:32 by tchantro          #+#    #+#             */
-/*   Updated: 2023/02/23 17:12:16 by tchantro         ###   ########.fr       */
+/*   Updated: 2023/02/24 17:44:22 by tchantro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,23 +15,25 @@
 void	*routine(void *arg)
 {
 	t_philo		*philo;
-	float		f;
+	//time_t		time;
 
-	f = 0;
 	philo = (t_philo *)arg;
 	if (philo->name % 2 == 0 || philo->name == philo->data->nbr_philo)
 	{
+		if (is_thinking(philo))
+			return (NULL);
+		/*time = get_time();
 		printing(get_time() - philo->data->start, philo, THINK);
-		while (f < philo->data->t_eat)
+		while (get_time() - time < philo->data->t_eat)
 		{
 			if (get_time() - philo->last_eat > philo->data->t_die)
 			{
 				printing(get_time() - philo->data->start, philo, DIE);
+				philo->data->death++;
 				return (NULL);
 			}
 			usleep(100);
-			f = f + 0.2;
-		}
+		}*/
 	}
 	while (1)
 	{
@@ -39,12 +41,22 @@ void	*routine(void *arg)
 			break ;
 		if (take_right_chop(philo))
 			break ;
+		if (is_eating(philo))
+			break ;
+		put_chop(philo);
+		if (is_sleeping(philo))
+			break ;
+		//if (is_thinking(philo))
+		//	break ;
 	}
 	return (NULL);
 }
 
 int	take_left_chop(t_philo *philo)
 {
+	int	rotation;
+
+	rotation = 0;
 	while (1)
 	{
 		pthread_mutex_lock(&philo->left_f->m_chop);
@@ -58,10 +70,17 @@ int	take_left_chop(t_philo *philo)
 		else
 		{
 			pthread_mutex_unlock(&philo->left_f->m_chop);
+			if (rotation == 0 && philo->nbr_eat != 0)
+			{
+				printf("%d ici\n", philo->name);
+				printing(get_time() - philo->data->start, philo, THINK);
+				rotation++;
+			}
 			usleep(100);
 			if (get_time() - philo->last_eat > philo->data->t_die)
 			{
 				printing(get_time() - philo->data->start, philo, DIE);
+				philo->data->death++;
 				return (1);
 			}
 		}
@@ -79,11 +98,6 @@ int	take_right_chop(t_philo *philo)
 			philo->right_f->i_chop = 0;
 			pthread_mutex_unlock(&philo->right_f->m_chop);
 			printing(get_time() - philo->data->start, philo, FORK);
-			if (is_eating(philo))
-				return (1);
-			put_chop(philo);
-			if (is_sleeping(philo))
-				return (1);
 			break ;
 		}
 		else
@@ -93,6 +107,7 @@ int	take_right_chop(t_philo *philo)
 			if (get_time() - philo->last_eat > philo->data->t_die)
 			{
 				printing(get_time() - philo->data->start, philo, DIE);
+				philo->data->death++;
 				return (1);
 			}
 		}
