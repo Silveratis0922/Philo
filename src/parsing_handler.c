@@ -6,13 +6,13 @@
 /*   By: tchantro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 13:24:05 by tchantro          #+#    #+#             */
-/*   Updated: 2023/02/13 18:06:25 by tchantro         ###   ########.fr       */
+/*   Updated: 2023/02/27 16:54:30 by tchantro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	verif_arg(int arg, int index_arg, t_data *data)
+int	verif_arg(int arg, int index_arg, t_data *data, int argc)
 {
 	if (index_arg == 1)
 	{
@@ -36,7 +36,7 @@ int	verif_arg(int arg, int index_arg, t_data *data)
 		if (arg < 1)
 			return (printf("Philosopher must eat at least 1 time\n"), 5);
 	}
-	init_data(arg, index_arg, data);
+	init_data(arg, index_arg, data, argc);
 	return (0);
 }
 

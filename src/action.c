@@ -6,7 +6,7 @@
 /*   By: tchantro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 14:20:29 by tchantro          #+#    #+#             */
-/*   Updated: 2023/02/24 17:35:16 by tchantro         ###   ########.fr       */
+/*   Updated: 2023/02/27 18:30:19 by tchantro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,8 @@ int	is_sleeping(t_philo *philo)
 		pthread_mutex_lock(&philo->data->mutex);
 		if (get_time() - philo->last_eat > philo->data->t_die)
 		{
-			printing(get_time() - philo->data->start, philo, DIE);
-			philo->data->death++;
-			pthread_mutex_unlock(&philo->data->mutex);
-			return (1);
+			pthread_mutex_unlock(&philo->data->mutex);	
+			return (is_dead(philo), 1);
 		}
 		pthread_mutex_unlock(&philo->data->mutex);
 		usleep(100);
@@ -41,16 +39,23 @@ int	is_eating(t_philo *philo)
 	time = get_time();
 	philo->last_eat = get_time();
 	printing(get_time() - philo->data->start, philo, EAT);
-	philo->nbr_eat++;
+	if (philo->data->must_eat != 0)
+	{
+		philo->nbr_eat++;
+		if (philo->nbr_eat == philo->data->must_eat)
+		{
+			pthread_mutex_lock(&philo->data->m_full);
+			philo->data->full++;
+			pthread_mutex_unlock(&philo->data->m_full);
+		}
+	}
 	while (get_time() - time < philo->data->t_eat)
 	{
 		pthread_mutex_lock(&philo->data->mutex);
 		if (get_time() - philo->last_eat > philo->data->t_die)
 		{
-			printing(get_time() - philo->data->start, philo, DIE);
-			philo->data->death++;
 			pthread_mutex_unlock(&philo->data->mutex);
-			return (1);
+			return (is_dead(philo), 1);
 		}
 		pthread_mutex_unlock(&philo->data->mutex);
 		usleep(100);
@@ -58,21 +63,20 @@ int	is_eating(t_philo *philo)
 	return (0);
 }
 
-int	is_thinking(t_philo *philo)
+void	is_dead(t_philo *philo)
 {
-	time_t	time;
+	printing(get_time() - philo->data->start, philo, DIE);
+	//pthread_mutex_lock(&philo->data->m_death);
+	//philo->data->death++;
+	//pthread_mutex_unlock(&philo->data->m_death);
+}
 
-	time = get_time();
-	printing(get_time() - philo->data->start, philo, THINK);
-	while (get_time() - time < philo->data->t_eat)
-	{
-		if (get_time() - philo->last_eat > philo->data->t_die)
-		{
-			printing(get_time() - philo->data->start, philo, DIE);
-			philo->data->death++;
-			return (1);
-		}
-		usleep(100);
-	}
-	return (0);
+void	put_chop(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->left_f->m_chop);
+	philo->left_f->i_chop = 1;
+	pthread_mutex_unlock(&philo->left_f->m_chop);
+	pthread_mutex_lock(&philo->right_f->m_chop);
+	philo->right_f->i_chop = 1;
+	pthread_mutex_unlock(&philo->right_f->m_chop);
 }

@@ -6,7 +6,7 @@
 /*   By: tchantro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 14:12:42 by tchantro          #+#    #+#             */
-/*   Updated: 2023/02/24 17:34:49 by tchantro         ###   ########.fr       */
+/*   Updated: 2023/02/27 17:43:26 by tchantro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,13 @@ typedef struct s_data
 	int				t_eat;
 	int				t_sleep;
 	int				must_eat;
+	int				full;
 	int				death;
 	time_t			start;
 	pthread_mutex_t	mutex;
-	pthread_mutex_t	print;
+	//pthread_mutex_t	print;
+	pthread_mutex_t	m_death;
+	pthread_mutex_t	m_full;
 }	t_data;
 
 typedef struct s_philo
@@ -57,8 +60,8 @@ typedef struct s_philo
 
 int			main(int argc, char **argv);
 int			parsing_handler(int argc, char **argv);
-int			verif_arg(int arg, int index_arg, t_data *data);
-void		init_data(int arg, int index_arg, t_data *data);
+int			verif_arg(int arg, int index_arg, t_data *data, int argc);
+void		init_data(int arg, int index_arg, t_data *data, int argc);
 t_philo		*init_philo(t_data *data, t_chop *chop);
 t_chop		*init_chop(t_data *data);
 void		init_threads(t_philo *philo, t_data *data);
@@ -68,7 +71,7 @@ int			take_right_chop(t_philo *philo);
 void		put_chop(t_philo *philo);
 int			is_sleeping(t_philo *philo);
 int			is_eating(t_philo *philo);
-int			is_thinking(t_philo *philo);
+void		is_dead(t_philo *philo);
 void		printing(time_t time, t_philo *philo, int write);
 void		destroy(t_data *data, t_chop *chop);
 time_t		get_time(void);

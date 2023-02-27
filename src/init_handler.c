@@ -6,13 +6,13 @@
 /*   By: tchantro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 15:12:46 by tchantro          #+#    #+#             */
-/*   Updated: 2023/02/24 16:54:38 by tchantro         ###   ########.fr       */
+/*   Updated: 2023/02/27 16:55:48 by tchantro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	init_data(int arg, int index_arg, t_data *data)
+void	init_data(int arg, int index_arg, t_data *data, int argc)
 {
 	if (index_arg == 1)
 		data->nbr_philo = arg;
@@ -24,6 +24,8 @@ void	init_data(int arg, int index_arg, t_data *data)
 		data->t_sleep = arg;
 	else if (index_arg == 5)
 		data->must_eat = arg;
+	if (argc == 5)
+		data->must_eat = 0;
 }
 
 t_philo	*init_philo(t_data *data, t_chop *chop)
@@ -44,6 +46,8 @@ t_philo	*init_philo(t_data *data, t_chop *chop)
 		philo[i].right_f = &chop[philo[i].name % data->nbr_philo];
 		i++;
 	}
+	data->death = 0;
+	data->full = 0;
 	return (philo);
 }
 
@@ -71,19 +75,23 @@ void	init_threads(t_philo *philo, t_data *data)
 
 	i = 0;
 	pthread_mutex_init(&data->mutex, NULL);
-	pthread_mutex_init(&data->print, NULL);
+//	pthread_mutex_init(&data->print, NULL);
+	pthread_mutex_init(&data->m_death, NULL);
+	pthread_mutex_init(&data->m_full, NULL);
 	while (i < data->nbr_philo)
 	{
 		philo[i].last_eat = philo->data->start;
-		pthread_create(&philo->thread, NULL, &routine, &philo[i]);
+		pthread_create(&philo[i].thread, NULL, &routine, &philo[i]);
 		i++;
 	}
 	i = 0;
 	while (i < data->nbr_philo)
 	{
-		pthread_join(philo->thread, NULL);
+		pthread_join(philo[i].thread, NULL);
 		i++;
 	}
 	pthread_mutex_destroy(&data->mutex);
-	pthread_mutex_destroy(&data->print);
+	//pthread_mutex_destroy(&data->print);
+	pthread_mutex_destroy(&data->m_death);
+	pthread_mutex_destroy(&data->m_full);
 }
