@@ -6,7 +6,7 @@
 /*   By: tchantro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 14:12:42 by tchantro          #+#    #+#             */
-/*   Updated: 2023/02/27 17:43:26 by tchantro         ###   ########.fr       */
+/*   Updated: 2023/03/01 15:14:34 by tchantro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 # include <string.h>
 # include <sys/time.h>
 # include <pthread.h>
-# include "libft.h"
 # define FORK 1
 # define EAT 2
 # define SLEEP 3
@@ -42,7 +41,6 @@ typedef struct s_data
 	int				death;
 	time_t			start;
 	pthread_mutex_t	mutex;
-	//pthread_mutex_t	print;
 	pthread_mutex_t	m_death;
 	pthread_mutex_t	m_full;
 }	t_data;
@@ -73,7 +71,16 @@ int			is_sleeping(t_philo *philo);
 int			is_eating(t_philo *philo);
 void		is_dead(t_philo *philo);
 void		printing(time_t time, t_philo *philo, int write);
-void		destroy(t_data *data, t_chop *chop);
+void		destroy(t_philo *philo, t_data *data, t_chop *chop);
+void		clear(t_philo *philo, t_data *data, t_chop *chop, int write);
+int			ft_atoi(const char *nptr);
+size_t		ft_strlen(const char *str);
+int			ft_isdigit(int i);
+void		init_mutex(t_data *data);
+void		destroy_mutex(t_data *data);
+void		need_place(t_philo *philo);
+void		need_place_bis(t_philo *philo);
+void		need_place_ter(t_philo *philo);
 time_t		get_time(void);
 
 #endif

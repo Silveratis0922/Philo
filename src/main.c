@@ -6,7 +6,7 @@
 /*   By: tchantro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 14:06:05 by tchantro          #+#    #+#             */
-/*   Updated: 2023/02/27 16:54:15 by tchantro         ###   ########.fr       */
+/*   Updated: 2023/03/01 12:14:37 by tchantro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,17 @@
 
 void	clear(t_philo *philo, t_data *data, t_chop *chop, int write)
 {
-	if (chop)
-		free(chop);
-	if (philo)
-		free(philo);
 	if (write == 2)
 	{
-		destroy(data, chop);
+		destroy(philo, data, chop);
 		printf("Malloc Error\n");
+	}
+	else
+	{
+		if (chop)
+			free(chop);
+		if (philo)
+			free(philo);
 	}
 }
 
@@ -49,8 +52,7 @@ int	main(int argc, char **argv)
 			return (clear(philo, &data, chop, 2), 2);
 		data.start = get_time();
 		init_threads(philo, &data);
-		destroy(&data, chop);
-		clear(philo, &data, chop, 0);
+		destroy(philo, &data, chop);
 	}
 	return (0);
 }

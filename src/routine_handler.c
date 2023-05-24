@@ -6,7 +6,7 @@
 /*   By: tchantro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 15:07:32 by tchantro          #+#    #+#             */
-/*   Updated: 2023/02/27 17:55:18 by tchantro         ###   ########.fr       */
+/*   Updated: 2023/03/01 15:12:50 by tchantro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,26 +35,30 @@ void	main_routine_with_four(t_philo *philo)
 
 void	main_routine_with_five(t_philo *philo, t_data *data)
 {
-	pthread_mutex_lock(&philo->data->m_full);
 	pthread_mutex_lock(&philo->data->m_death);
-	while (philo->data->death == 0 && data->full != data->nbr_philo)
+	while (philo->data->death == 0)
 	{
-		pthread_mutex_unlock(&philo->data->m_full);
-		pthread_mutex_unlock(&philo->data->m_death);
-		if (take_left_chop(philo))
+		need_place_bis(philo);
+		if (data->full != data->nbr_philo)
+		{
+			pthread_mutex_unlock(&philo->data->m_full);
+			if (take_left_chop(philo))
+				break ;
+			if (take_right_chop(philo))
+				break ;
+			if (is_eating(philo))
+				break ;
+			put_chop(philo);
+			if (is_sleeping(philo))
+				break ;
+			need_place_ter(philo);
+		}
+		else
+		{
+			pthread_mutex_unlock(&philo->data->m_full);
 			break ;
-		if (take_right_chop(philo))
-			break ;
-		if (is_eating(philo))
-			break ;
-		put_chop(philo);
-		if (is_sleeping(philo))
-			break ;
-		printing(get_time() - philo->data->start, philo, THINK);
-		pthread_mutex_lock(&philo->data->m_full);
-		pthread_mutex_lock(&philo->data->m_death);
+		}
 	}
-	pthread_mutex_unlock(&philo->data->m_full);
 	pthread_mutex_unlock(&philo->data->m_death);
 }
 
@@ -64,14 +68,18 @@ void	*routine(void *arg)
 	time_t		time;
 
 	philo = (t_philo *)arg;
-	if (philo->name % 2 == 0 || philo->name == philo->data->nbr_philo)
+	if (philo->data->nbr_philo != 1 && (philo->name % 2 == 0
+			|| philo->name == philo->data->nbr_philo))
 	{
 		time = get_time();
 		printing(get_time() - philo->data->start, philo, THINK);
 		while (get_time() - time < philo->data->t_eat)
 		{
 			if (get_time() - philo->last_eat > philo->data->t_die)
-				return (is_dead(philo), NULL);
+			{
+				printing(get_time() - philo->data->start, philo, DIE);
+				return (NULL);
+			}
 			usleep(100);
 		}
 	}

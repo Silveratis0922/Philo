@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   printing.c                                         :+:      :+:    :+:   */
+/*   print_and_mutex.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tchantro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/14 13:54:19 by tchantro          #+#    #+#             */
-/*   Updated: 2023/02/27 18:24:46 by tchantro         ###   ########.fr       */
+/*   Updated: 2023/03/01 14:52:22 by tchantro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,4 +32,18 @@ void	printing(time_t time, t_philo *philo, int write)
 		}
 	}
 	pthread_mutex_unlock(&philo->data->m_death);
+}
+
+void	init_mutex(t_data *data)
+{
+	pthread_mutex_init(&data->mutex, NULL);
+	pthread_mutex_init(&data->m_death, NULL);
+	pthread_mutex_init(&data->m_full, NULL);
+}
+
+void	destroy_mutex(t_data *data)
+{
+	pthread_mutex_destroy(&data->mutex);
+	pthread_mutex_destroy(&data->m_death);
+	pthread_mutex_destroy(&data->m_full);
 }

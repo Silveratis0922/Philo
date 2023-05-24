@@ -6,7 +6,7 @@
 /*   By: tchantro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 14:20:29 by tchantro          #+#    #+#             */
-/*   Updated: 2023/02/27 18:30:19 by tchantro         ###   ########.fr       */
+/*   Updated: 2023/03/01 15:14:44 by tchantro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	is_sleeping(t_philo *philo)
 		pthread_mutex_lock(&philo->data->mutex);
 		if (get_time() - philo->last_eat > philo->data->t_die)
 		{
-			pthread_mutex_unlock(&philo->data->mutex);	
+			pthread_mutex_unlock(&philo->data->mutex);
 			return (is_dead(philo), 1);
 		}
 		pthread_mutex_unlock(&philo->data->mutex);
@@ -43,11 +43,7 @@ int	is_eating(t_philo *philo)
 	{
 		philo->nbr_eat++;
 		if (philo->nbr_eat == philo->data->must_eat)
-		{
-			pthread_mutex_lock(&philo->data->m_full);
-			philo->data->full++;
-			pthread_mutex_unlock(&philo->data->m_full);
-		}
+			need_place(philo);
 	}
 	while (get_time() - time < philo->data->t_eat)
 	{
@@ -66,9 +62,7 @@ int	is_eating(t_philo *philo)
 void	is_dead(t_philo *philo)
 {
 	printing(get_time() - philo->data->start, philo, DIE);
-	//pthread_mutex_lock(&philo->data->m_death);
-	//philo->data->death++;
-	//pthread_mutex_unlock(&philo->data->m_death);
+	pthread_mutex_lock(&philo->data->m_death);
 }
 
 void	put_chop(t_philo *philo)

@@ -6,7 +6,7 @@
 /*   By: tchantro <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 15:12:46 by tchantro          #+#    #+#             */
-/*   Updated: 2023/02/27 16:55:48 by tchantro         ###   ########.fr       */
+/*   Updated: 2023/03/01 14:37:01 by tchantro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,24 +74,25 @@ void	init_threads(t_philo *philo, t_data *data)
 	int		i;
 
 	i = 0;
-	pthread_mutex_init(&data->mutex, NULL);
-//	pthread_mutex_init(&data->print, NULL);
-	pthread_mutex_init(&data->m_death, NULL);
-	pthread_mutex_init(&data->m_full, NULL);
+	init_mutex(data);
 	while (i < data->nbr_philo)
 	{
 		philo[i].last_eat = philo->data->start;
-		pthread_create(&philo[i].thread, NULL, &routine, &philo[i]);
+		if (pthread_create(&philo[i].thread, NULL, &routine, &philo[i]))
+		{
+			while (i < 0)
+			{
+				pthread_join(philo[i].thread, NULL);
+				i--;
+			}
+			destroy_mutex(data);
+			printf("Thread Error\n");
+			return ;
+		}
 		i++;
 	}
-	i = 0;
-	while (i < data->nbr_philo)
-	{
+	i = -1;
+	while (++i < data->nbr_philo)
 		pthread_join(philo[i].thread, NULL);
-		i++;
-	}
-	pthread_mutex_destroy(&data->mutex);
-	//pthread_mutex_destroy(&data->print);
-	pthread_mutex_destroy(&data->m_death);
-	pthread_mutex_destroy(&data->m_full);
+	destroy_mutex(data);
 }
